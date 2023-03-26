@@ -16,9 +16,11 @@
     "eslint-config-next": "13.2.4",
     "next": "13.2.4",
     "next-connect": "^0.13.0",
+    "node_module": "^0.0.0",
     "openai": "^3.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "swr": "^2.1.1",
     "typescript": "5.0.2"
   },
   "devDependencies": {

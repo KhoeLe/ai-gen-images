@@ -1,9 +1,14 @@
 "use client";
 
+import fetchSuggestionFromChatGPT from "@/lib/fetchSuggestionFromChatGPT";
 import { useState } from "react";
+import useSWR from "swr";
 
 function PromptInput() {
     const [input, setInput] = useState("");
+
+    //fetching data from chatgpt
+    const {data : suggestion, isLoading, mutate, isValidating } =  useSWR('/api/suggestion' , fetchSuggestionFromChatGPT , {revalidateOnFocus: false})
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -15,17 +20,19 @@ function PromptInput() {
     ) => {
         setInput(event.target.value);
     };
+    console.log(suggestion)
+
 
     return (
         <div className="m-10">
             <form
-                className="flex flex-col lg:flex-row shadow-md shadow-slate-400/10 border rounded-md lg:divide-x "
+                className="flex flex-col border rounded-md shadow-md lg:flex-row shadow-slate-400/10 lg:divide-x "
                 onSubmit={handleSubmit}>
                 <textarea
                     value={input}
                     onChange={handleInputChange}
-                    placeholder="Enter a prompt....."
-                    className="flex-1 p-4 outline-none rounded-md"
+                    placeholder={(isLoading && "ChatGPT is thinking of suggestion......") ||suggestion ||"Enter a prompt....."}
+                    className="flex-1 p-4 rounded-md outline-none"
                 />
                 <button
                     disabled={!input}
@@ -38,16 +45,28 @@ function PromptInput() {
                     Generate
                 </button>
                 <button
+                    disabled={isLoading || isValidating}
                     type="button"
-                    className="p-4 bg-violet-400 text-white translate-colors duration-200 font-bold disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
+                    className="p-4 font-bold text-white duration-200 bg-violet-400 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
                     Use Suggestion
                 </button>
                 <button
+                    onClick={mutate}
                     type="button"
-                    className="p-4 bg-white text-violet-500 translate-colors duration-200 font-bold disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
+                    className="p-4 font-bold duration-200 bg-white text-violet-500 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
                     New Suggestion
                 </button>
             </form>
+
+            {input ? (
+                <p className="pt-2 pl-2 italic font-light">
+                    Suggestion: {" "}
+                    <span className="text-violet-500">
+                        {isLoading ? "ChatGPT is thinking...." : suggestion}
+                    </span>
+                </p>
+            ) : null}
+
         </div>
     );
 }

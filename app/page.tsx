@@ -1,31 +1,13 @@
+// import Images from "../components/Images";
 
-// import ClientProvider from "../components/ClientProvider";
-import Header from "@/Components/Header";
-import PromptInput from "@/Components/PromptInput";
-// import "../styles/globals.css";
-import "../styles/globals.css"
-
-export const metadata = {
-  title: "AI Image Generator",
-  description: "Built with Next.js 13.2, DALL·E 2, and Chat GPT",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+async function HomePage() {
   return (
-    <html lang="en">
-      <body>
-        {/* <ClientProvider> */}
-          <Header />
-
-          <PromptInput />
-
-          {children}
-        {/* </ClientProvider> */}
-      </body>
-    </html>
+    <div className="mx-0 md:10">
+      {/* <Images />
+       */}
+       <h1 className="text-violet-500">Hello World!</h1>
+    </div>
   );
 }
+
+export default HomePage;
