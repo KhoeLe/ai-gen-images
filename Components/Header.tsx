@@ -7,10 +7,10 @@ function Header() {
             {/* left */}
             <div className="flex items-center space-x-2">
                 <Image
-                    src="https://links.papareact.com/4t3"
+                    src="https://cdn.hashnode.com/res/hashnode/image/upload/v1679496404723/ng7bBSxaj.png"
                     alt="Chat GPT Logo"
-                    width={30}
-                    height={30}
+                    width={80}
+                    height={80}
                 />
 
                 <div>
@@ -36,7 +36,7 @@ function Header() {
                     // Use target="_blank" to open the link in a new tab
                     className="px-2 font-light"
                     target={"_blank"}
-                    href={"https://github.com/KhoeLe"}>
+                    href={"https://github.com/KhoeLe/ai-gen-images"}>
                     Git Hub Repo
                 </Link>
             </div>
