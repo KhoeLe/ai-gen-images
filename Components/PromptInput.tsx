@@ -1,18 +1,70 @@
 "use client";
 
-import fetchSuggestionFromChatGPT from "@/lib/fetchSuggestionFromChatGPT";
-import { useState } from "react";
 import useSWR from "swr";
+import fetchSuggestionFromChatGPT from "@/lib/fetchSuggestionFromChatGPT";
+import { FormEvent, useState } from "react";
+import fetchImages from "@/lib/fetchImages";
+import toast from "react-hot-toast";
 
 function PromptInput() {
     const [input, setInput] = useState("");
 
     //fetching data from chatgpt
-    const {data : suggestion, isLoading, mutate, isValidating } =  useSWR('/api/suggestion' , fetchSuggestionFromChatGPT , {revalidateOnFocus: false})
+    const {
+        data: suggestion,
+        isLoading,
+        mutate,
+        isValidating,
+    } = useSWR("/api/suggestion", fetchSuggestionFromChatGPT, {
+        revalidateOnFocus: false,
+    });
+    const { mutate: updateImages } = useSWR("/api/getImages", fetchImages, {
+        revalidateOnFocus: false,
+    });
 
-    const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
+    const submitPrompt = async (useSuggestion?: boolean) => {
+        const inputPrompt = input.toLowerCase().trim();
+        setInput("");
+
+        console.log(inputPrompt);
+        // p is the prompt that will be sent to the API
+        // if useSuggestion is true, then we use the suggestion
+        const p = useSuggestion ? suggestion : inputPrompt;
+
+        const notificationPrompt = p;
+        const notificationPromptShort = notificationPrompt.slice(0,20);
+
+        const notification = toast.loading(
+            `Generating image for "${notificationPromptShort}"...`
+        );
+
+        console.log("DEBUG HERE",p)
+
+        const res = await fetch("/api/generateImage", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: p }),
+        });
+        const dataPrompt = await res.json();
+
+        if (dataPrompt.error) {
+            toast.error(dataPrompt.error, {
+                id: notification,
+            });
+        } else {
+            toast.success(`AI D A L L E Image generated for "${notificationPromptShort}"!`, {
+                id: notification,
+            });
+        }
+        updateImages();
+    };
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setInput("");
+        await submitPrompt();
     };
 
     const handleInputChange = (
@@ -20,8 +72,7 @@ function PromptInput() {
     ) => {
         setInput(event.target.value);
     };
-    console.log(suggestion)
-
+    console.log(suggestion);
 
     return (
         <div className="m-10">
@@ -31,7 +82,12 @@ function PromptInput() {
                 <textarea
                     value={input}
                     onChange={handleInputChange}
-                    placeholder={(isLoading && "ChatGPT is thinking of suggestion......") ||suggestion ||"Enter a prompt....."}
+                    placeholder={
+                        (isLoading &&
+                            "ChatGPT is thinking of suggestion......") ||
+                        suggestion ||
+                        "Enter a prompt....."
+                    }
                     className="flex-1 p-4 rounded-md outline-none"
                 />
                 <button
@@ -45,6 +101,7 @@ function PromptInput() {
                     Generate
                 </button>
                 <button
+                    onClick={() => submitPrompt(true)}
                     disabled={isLoading || isValidating}
                     type="button"
                     className="p-4 font-bold text-white duration-200 bg-violet-400 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
@@ -60,15 +117,16 @@ function PromptInput() {
 
             {input ? (
                 <p className="pt-2 pl-2 italic font-light">
-                    Suggestion: {" "}
+                    Suggestion:{" "}
                     <span className="text-violet-500">
                         {isLoading ? "ChatGPT is thinking...." : suggestion}
                     </span>
+
                 </p>
             ) : null}
-
         </div>
     );
 }
+
 
 export default PromptInput;
