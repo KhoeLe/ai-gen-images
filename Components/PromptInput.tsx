@@ -2,12 +2,13 @@
 
 import useSWR from "swr";
 import fetchSuggestionFromChatGPT from "@/lib/fetchSuggestionFromChatGPT";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import fetchImages from "@/lib/fetchImages";
 import toast from "react-hot-toast";
 
 function PromptInput() {
     const [input, setInput] = useState("");
+    const [checkInput, setCheckInput] = useState(false);
 
     //fetching data from chatgpt
     const {
@@ -32,13 +33,13 @@ function PromptInput() {
         const p = useSuggestion ? suggestion : inputPrompt;
 
         const notificationPrompt = p;
-        const notificationPromptShort = notificationPrompt.slice(0,20);
+        const notificationPromptShort = notificationPrompt.slice(0, 20);
 
         const notification = toast.loading(
             `Generating image for "${notificationPromptShort}"...`
         );
 
-        console.log("DEBUG HERE",p)
+        console.log("DEBUG HERE", p);
 
         const res = await fetch("/api/generateImage", {
             method: "POST",
@@ -54,9 +55,12 @@ function PromptInput() {
                 id: notification,
             });
         } else {
-            toast.success(`AI D A L L E Image generated for "${notificationPromptShort}"!`, {
-                id: notification,
-            });
+            toast.success(
+                `AI D A L L E Image generated for "${notificationPromptShort}"!`,
+                {
+                    id: notification,
+                }
+            );
         }
         updateImages();
     };
@@ -71,8 +75,8 @@ function PromptInput() {
         event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         setInput(event.target.value);
+        setCheckInput(event.target.value.trim().length > 0);
     };
-    console.log(suggestion);
 
     return (
         <div className="m-10">
@@ -95,7 +99,7 @@ function PromptInput() {
                     type="submit"
                     className={`p-4 font-bold ${
                         input
-                            ? "bg-violet-500 text-white transition-color duration-200"
+                            ? "bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white transition-color duration-200"
                             : "text-gray-300 cursor-not-allowed"
                     }`}>
                     Generate
@@ -104,13 +108,19 @@ function PromptInput() {
                     onClick={() => submitPrompt(true)}
                     disabled={isLoading || isValidating}
                     type="button"
-                    className="p-4 font-bold text-white duration-200 bg-violet-400 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
+                    className="p-4 font-bold text-white duration-200 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
                     Use Suggestion
                 </button>
                 <button
+                    disabled={checkInput}
                     onClick={mutate}
                     type="button"
-                    className="p-4 font-bold duration-200 bg-white text-violet-500 translate-colors disabled:text-gray-300 disabled:cursor-not-allowed disabled:bg-gray-400">
+                    className={`p-4 font-bold duration-200 ${
+                        checkInput
+                             ? "bg-gray-400 text-gray-300 cursor-not-allowed"
+                            : "bg-white text-violet-500 hover:bg-violet-500 hover:text-white hover:shadow-md"
+
+                    }`}>
                     New Suggestion
                 </button>
             </form>
@@ -121,12 +131,10 @@ function PromptInput() {
                     <span className="text-violet-500">
                         {isLoading ? "ChatGPT is thinking...." : suggestion}
                     </span>
-
                 </p>
             ) : null}
         </div>
     );
 }
-
 
 export default PromptInput;

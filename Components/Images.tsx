@@ -3,6 +3,8 @@
 import fetchImages from "@/lib/fetchImages";
 import Image from "next/image";
 import useSWR from "swr";
+import Pagination from "./Pagination";
+import { useState } from "react";
 
 interface ImageType {
     url: string;
@@ -18,12 +20,35 @@ function Images() {
         isValidating,
     } = useSWR("/api/getImages", fetchImages, { revalidateOnFocus: false });
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const imagesPerPage = 10; // The number of images per page
+
+    const indexOfLastImage = currentPage * imagesPerPage;
+    const indexOfFirstImage = indexOfLastImage - imagesPerPage;
+    const currentImages = images?.imagesURL?.slice(
+        indexOfFirstImage,
+        indexOfLastImage
+    );
 
     return (
         <div>
+            <div className="top-0 items-center py-5 mb-10">
+                        {images?.imagesURL?.length > imagesPerPage ? (
+                            <>
+                                <Pagination
+                                    currentPage={currentPage}
+                                    setCurrentPage={setCurrentPage}
+                                    totalPages={Math.ceil(
+                                        images.imagesURL.length / imagesPerPage
+                                    )}
+                                    imagesPerPage={0}
+                                />
+                            </>
+                        ) : null}
+            </div>
             {
                 <button
-                    className="fixed z-20 px-5 py-3 font-bold text-white rounded-md bottom-10 right-10 bg-violet-400/90 hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    className="fixed z-20 px-5 py-3 font-bold text-white rounded-md bottom-10 right-10 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 focus:outline-none focus:ring-2 focus"
                     onClick={() => refreshImages(images)}>
                     {!isLoading && isValidating
                         ? "Refreshing....."
@@ -38,7 +63,7 @@ function Images() {
             ) : null}
 
             <div className="grid gap-4 px-0 grid-col-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 md:px-10">
-                {images?.imagesURL?.map((image: ImageType, i: number) => (
+                {currentImages?.map((image: ImageType, i: number) => (
                     <div
                         className={` relative cursor-help ${
                             i === 0 && "md:col-span-2 md:row-span-2"
