@@ -4,9 +4,17 @@ interface PaginationProps {
     currentPage: number;
     imagesPerPage: number;
     totalPages: number;
+    totalImages : number;
+    indexOfLastImage : number;
+    indexOfFirstImage : number;
     setCurrentPage: (page: number) => void;
 }
+
+
 function Pagination({
+    totalImages,
+    indexOfLastImage,
+    indexOfFirstImage,
     currentPage,
     totalPages,
     setCurrentPage,
@@ -15,6 +23,8 @@ function Pagination({
     for (let i = 1; i <= totalPages; i++) {
         pageNumbers.push(i);
     }
+
+
 
     const handleClick = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -51,6 +61,15 @@ function Pagination({
 
     return (
         <div className="pagination ">
+            <div className="top-0 flex justify-end space-x-2 text-sm text-gray-700 top sm:items-center">
+                <span>Showing </span>
+                <span className="font-medium ">{indexOfFirstImage === 0 ? "1"  : indexOfFirstImage }</span>
+                <span> to </span>
+                <span className="font-medium ">{indexOfFirstImage > totalImages ? indexOfLastImage : totalImages }</span>
+                <span> of </span>
+                <span className="font-medium ">{totalImages }</span>
+                <span> results</span>
+            </div>
             <div className="flex items-center justify-center h-full px-4 h-w lg:px-0 sm:px-6">
                 <div className="flex items-center justify-between h-full border-t border-gray-200 lg:w-3/5">
                     <div
