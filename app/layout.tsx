@@ -2,6 +2,8 @@ import Header from "@/Components/Header";
 import PromptInput from "@/Components/PromptInput";
 import ClientProvider from "@/Components/ClientProvider";
 import "./global.css"
+import fetchImages from "@/lib/fetchImages";
+import fetchSuggestionFromChatGPT from "@/lib/fetchSuggestionFromChatGPT";
 
 export const metadata = {
   title: "AI Image Generator",
