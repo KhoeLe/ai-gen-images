@@ -1,6 +1,9 @@
 export async function GET(request: Request) {
     const response = await fetch(
-        "https://uy6lfryirn3xwu3vhuagdummce0ayaxe.lambda-url.ap-southeast-1.on.aws"
+        "https://uy6lfryirn3xwu3vhuagdummce0ayaxe.lambda-url.ap-southeast-1.on.aws",
+        {
+            cache: "no-store",
+        }
     );
 
     const blob = await response.blob();
