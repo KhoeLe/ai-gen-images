@@ -124,7 +124,7 @@ function Pagination({
                                 strokeLinejoin="round"
                             />
                             <path
-                                d="M9.5 7.33333L12.8333 4"
+                                d="M9.5 0.666687L12.8333 4.00002"
                                 stroke="currentColor"
                                 strokeWidth="1.25"
                                 strokeLinecap="round"
