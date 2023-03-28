@@ -18,7 +18,7 @@ function Images() {
         isLoading,
         mutate: refreshImages,
         isValidating,
-    } = useSWR("/api/getImages", fetchImages, { revalidateOnFocus: false });
+    } = useSWR("images", fetchImages, { revalidateOnFocus: false });
 
     const [currentPage, setCurrentPage] = useState(1);
     const imagesPerPage = 10; // The number of images per page
