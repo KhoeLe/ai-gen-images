@@ -75,7 +75,7 @@ function PromptInput() {
         event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         setInput(event.target.value);
-        setCheckInput(event.target.value.length > 0);
+        setCheckInput(event.target.value.trim().length > 0);
     };
 
     return (
