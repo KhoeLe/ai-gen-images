@@ -1,7 +1,7 @@
 import Header from "@/Components/Header";
 import PromptInput from "@/Components/PromptInput";
-import "../styles/globals.css"
 import ClientProvider from "@/Components/ClientProvider";
+import "./global.css"
 
 export const metadata = {
   title: "AI Image Generator",
